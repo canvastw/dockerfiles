@@ -41,22 +41,28 @@ def isSlackReportingEnabled() {
   return env.GERRIT_EVENT_TYPE == 'change-merged' || (commitMessageFlag("slack-reporting") as Boolean)
 }
 
+def buildRegistryFQDN() {
+  load('build/new-jenkins/groovy/configuration.groovy').buildRegistryFQDN()
+}
+
 pipeline {
   agent { label 'docker' }
 
   environment {
     TEST_IMAGE_NAME = 'dockerfiles_build'
-    DEFAULT_ROOT_PATH = "${BUILD_REGISTRY_FQDN}/jenkins"
-    ROOT_PATH = "${BUILD_REGISTRY_FQDN}/${getBuildRegistryPath()}"
+    BUILD_REGISTRY_FQDN = buildRegistryFQDN()
+    //DEFAULT_ROOT_PATH = "${BUILD_REGISTRY_FQDN}/jenkins"
+    //ROOT_PATH = "${BUILD_REGISTRY_FQDN}/${getBuildRegistryPath()}"
+    ROOT_PATH = 'canvastw'
   }
 
   stages {
     stage('Sanity Check') {
       steps {
         script {
-          if(isChangeMerged() && env.GERRIT_EVENT_TYPE != 'change-merged' && env.CHANGE_MERGED != 'true' && ROOT_PATH == DEFAULT_ROOT_PATH) {
-            error "[build-registry-path] must be specified at the same time as [change-merged]"
-          }
+          //if(isChangeMerged() && env.GERRIT_EVENT_TYPE != 'change-merged' && env.CHANGE_MERGED != 'true' && ROOT_PATH == DEFAULT_ROOT_PATH) {
+          //  error "[build-registry-path] must be specified at the same time as [change-merged]"
+          //}
         }
       }
     }
@@ -115,7 +121,7 @@ pipeline {
                         }
 
                         def baseTag = it.replaceAll('appliances\\/', '')
-                        def dockerhubTag = isDockerhubUploadEnabled() ? "--tag instructure/${baseTag.replaceAll('\\/', ':')}" : ''
+                        def dockerhubTag = isDockerhubUploadEnabled() ? "--tag moodletw/${baseTag.replaceAll('\\/', ':')}" : ''
                         def imageTag = "${ROOT_PATH}/${baseTag.replaceAll('\\/', ':')}"
 
                         def platform = sh(script: """
