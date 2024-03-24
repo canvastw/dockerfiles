@@ -63,6 +63,7 @@ pipeline {
           //if(isChangeMerged() && env.GERRIT_EVENT_TYPE != 'change-merged' && env.CHANGE_MERGED != 'true' && ROOT_PATH == DEFAULT_ROOT_PATH) {
           //  error "[build-registry-path] must be specified at the same time as [change-merged]"
           //}
+          println "*** Skip..."
         }
       }
     }
